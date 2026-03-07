@@ -4,8 +4,6 @@ Reader::Reader(istream* input) : input(input)
 {
 }
 
-
-
 string Reader::getLine()
 {
 	string line;

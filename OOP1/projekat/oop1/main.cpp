@@ -1,24 +1,32 @@
 #include <iostream>
 #include <string>
-#include "Tokenizer.h"
+#include "Lexer.h"
 #include "Reader.h"
 #include "ConsoleReader.h"
+#include "LexicalException.h"
 using namespace std;
 int main()
 {
     Reader* reader = new ConsoleReader();
-    Tokenizer* tokenizer = new Tokenizer();
+    Lexer* lexer = new Lexer();
     while (true) {
-        cout << "$";
+        cout << "$ ";
         string line = reader->getLine();
-        vector<string> tokens = tokenizer->tokenize(line);
-        for (const string& token : tokens) {
-            cout << token << " ";
+        try {
+            vector<string> tokens = lexer->tokenize(line);
+            for (const string& token : tokens) {
+                cout << token << " ";
+            }
+            cout << "\n";
         }
-        cout << "\n";
+        catch (const LexicalException& e) {
+            e.callException();
+		}
+
     }
     
-
+	delete reader;
+	delete lexer;
 }
 
 
