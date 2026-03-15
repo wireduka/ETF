@@ -29,3 +29,11 @@ Makefile
 # Debug
 *.dSYM/
 *.pdb
+
+Debug/
+Release/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.ilk
