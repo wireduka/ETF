@@ -3,17 +3,13 @@
 #include <string>
 using namespace std;
 
-class Exception{
+class Exception : public exception {
 public:
-	Exception(const string& line, int errorPosition);
+
+	Exception() = default;
 	virtual ~Exception() = default;
+	virtual void print() const = 0;
 
-	virtual void callException() const = 0;
-	
-
-protected:
-	string line;
-	int errorPosition;
 };
 
 #endif

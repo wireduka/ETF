@@ -4,15 +4,33 @@
 #include <vector>
 using namespace std;
 
+enum TokenType {
+	WORD,
+	QUOTED_STRING,
+	REDIRECTION_IN,
+	REDIRECTION_OUT,
+	REDIRECTION_APPEND,
+	PIPE
+};
+
+struct Token {
+	TokenType type;
+	string value;
+};
+
 class Lexer {
 public:
 	Lexer();
-	vector<string> tokenize(const string& line);
+	vector<Token> tokenize(const string& line);
 
 	bool isValidCharacter(char character);
+	bool isQuotationMark(char character);
+	Token setToken(string& word,bool isQuoted);
+	string tokenTypeToString(TokenType type);
+
+
 private:
-	string line;
-	bool hasError = false;
+
 };
 
 #endif

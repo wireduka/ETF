@@ -128,17 +128,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ConsoleReader.cpp" />
-    <ClCompile Include="IException.cpp" />
     <ClCompile Include="LexicalException.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Program.cpp" />
     <ClCompile Include="Reader.cpp" />
     <ClCompile Include="Lexer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ConsoleReader.h" />
+    <ClInclude Include="ICommand.h" />
     <ClInclude Include="IException.h" />
     <ClInclude Include="LexicalException.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="Program.h" />
     <ClInclude Include="Reader.h" />
     <ClInclude Include="Lexer.h" />
   </ItemGroup>

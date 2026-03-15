@@ -7,30 +7,14 @@ using namespace std;
 
 class Reader {
 public:
-	Reader(istream* input);
-	virtual ~Reader() {}
+	Reader(istream& input);
+	~Reader() {}
 
 	string getLine();
 	bool isEof();
 
-protected:
-	istream* input;
+private:
+	istream& input;
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #endif
