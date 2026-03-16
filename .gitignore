@@ -37,3 +37,8 @@ Release/
 *.vcxproj.user
 *.sln
 *.ilk
+.vs/
+*.db
+*.vsidx
+*.ipch
+*.backup.json
