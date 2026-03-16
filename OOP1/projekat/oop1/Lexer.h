@@ -14,7 +14,7 @@ enum TokenType {
 };
 
 struct Token {
-	TokenType type;
+	TokenType type = WORD;
 	string value;
 };
 

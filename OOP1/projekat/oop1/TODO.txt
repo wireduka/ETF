@@ -1,0 +1,3 @@
+// TODO::Parser	- provera posle kreiranja komandi je l svaka osim prve ima inputStream i svaka osim poslednje ima outputStream ->SyntaxError
+// TODO::Parser	- uzimanje redirectiona i njihovo postavljanje
+// TODO::Lexer	- poseban slucaj za sve moguce redirectione, kako bi adekvatno generisao tokene posto je dozvoljeno da ne bude belina kod ulaznog i izlaznog toka

@@ -5,10 +5,10 @@
 
 class LexicalException : public Exception {
 public:
-	LexicalException(const string& line, vector<int>& const errorPosition);
+	LexicalException(const string& line, const vector<int>& errorPosition);
 	LexicalException(const string& message);
 
-	virtual void print() const override;
+	void print() const override;
 private:
 
 	string line;

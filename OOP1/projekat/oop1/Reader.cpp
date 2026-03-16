@@ -1,8 +1,6 @@
 #include "Reader.h"
 
-Reader::Reader(istream& input) : input(input)
-{
-}
+Reader::Reader(istream& input) : input(input){}
 
 string Reader::getLine()
 {
@@ -18,5 +16,4 @@ bool Reader::isEof()
 		return true;
 	}
 	return false;
-
 }

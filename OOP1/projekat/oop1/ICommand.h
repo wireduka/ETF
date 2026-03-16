@@ -9,6 +9,7 @@ public:
 
 	virtual bool hasInput() const { return true; }
 	virtual bool hasOutput() const { return true; }
+	virtual bool hasOption() const { return false; }
 protected:
 	string inputFile;
 	string outputFle;

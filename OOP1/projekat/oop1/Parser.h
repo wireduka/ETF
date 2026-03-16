@@ -2,7 +2,7 @@
 #define PARSER_H
 #include <vector>
 #include "ICommand.h"
-#include "Lexer.h";
+#include "Lexer.h"
 
 class Parser {
 public:

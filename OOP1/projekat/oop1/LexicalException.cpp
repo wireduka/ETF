@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-LexicalException::LexicalException(const string& line, vector<int>& const errorPositions) : line(line), errorPositions(errorPositions) {}
+LexicalException::LexicalException(const string& line, const vector<int>&  errorPositions) : line(line), errorPositions(errorPositions) {}
 LexicalException::LexicalException(const string& message) : message(message){}
 
 void LexicalException::print() const

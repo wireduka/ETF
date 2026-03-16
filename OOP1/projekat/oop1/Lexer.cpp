@@ -10,7 +10,7 @@ vector<Token> Lexer::tokenize(const string& line){
 	string current;
 	string nline = (line.size() > MAX) ? line.substr(0, MAX) : line;
 	// main loop
-	for (size_t i = 0; i < nline.size(); i++) {
+	for (int i = 0; i < nline.size(); i++) {
 		char c = nline[i];
 		// quotation subprogram
 		if (isQuotationMark(c)) {

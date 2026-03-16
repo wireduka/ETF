@@ -1,4 +1,3 @@
-
 #include <string>
 #include "Program.h"
 #include <istream>
