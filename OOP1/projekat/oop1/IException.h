@@ -3,6 +3,7 @@
 #include <string>
 using namespace std;
 
+//	Base exception class
 class Exception : public exception {
 public:
 

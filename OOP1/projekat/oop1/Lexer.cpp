@@ -27,17 +27,54 @@ vector<Token> Lexer::tokenize(const string& line){
 			current.clear();
 			continue;
 		}
-		if (!isValidCharacter(c)) {
+		if (!isValidCharacter(nline[i])) {
 			errorMarkers.push_back(i);
 		}
-		if (isspace(c)) {
+		// checking possible redirection situations: >, <, >>
+		if (nline[i] == '<') {
+			if (!current.empty()) {
+				tokens.push_back(setToken(current, false));
+				current.clear();
+			}
+			current.push_back(nline[i]);
+			tokens.push_back(setToken(current, false));
+			current.clear();
+			continue;
+		}
+
+		else if (i + 1 < nline.size() && nline[i] == '>' && nline[i + 1] == '>') {
+			if (!current.empty()) {
+				tokens.push_back(setToken(current, false));
+				current.clear();
+			}
+			current.push_back(nline[i]);
+			current.push_back(nline[i + 1]);
+			tokens.push_back(setToken(current, false));
+			current.clear();
+			i++;
+			continue;
+		}
+
+		else if (nline[i] == '>') {
+			if (!current.empty()) {
+				tokens.push_back(setToken(current, false));
+				current.clear();
+			}
+			current.push_back(nline[i]);
+			tokens.push_back(setToken(current, false));
+			current.clear();
+			continue;
+		}
+		
+		
+		if (isspace(nline[i])) {
 			if (!current.empty()) {
 				tokens.push_back(setToken(current, false));
 				current.clear();
 			}
 		}
 		else
-			current.push_back(c);
+			current.push_back(nline[i]);
 	}
 
 	if (!current.empty()) {

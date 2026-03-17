@@ -21,10 +21,12 @@ struct Token {
 class Lexer {
 public:
 	Lexer();
+	//	Tokenizes reader output into seperate tokens
 	vector<Token> tokenize(const string& line);
 
 	bool isValidCharacter(char character);
 	bool isQuotationMark(char character);
+	//	Maps the token into the adequate enum member
 	Token setToken(string& word,bool isQuoted);
 	string tokenTypeToString(TokenType type);
 

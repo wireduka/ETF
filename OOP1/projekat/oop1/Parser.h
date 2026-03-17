@@ -8,7 +8,14 @@ class Parser {
 public:
 	Parser() = default;
 	~Parser() = default;
+	// Parses the command
 	vector <Command*> parse(const vector <Token>& tokens);
+
+	// Splits token list into seperate lists by using pipe sign as seperator
 	vector <vector<Token>> splitByPipe(const vector <Token>& tokens);
+
+	Command* createCommand(const string& name);
+	//	Checking for possible redirection cases
+	vector <Token> setRedirections(vector<Token> group,Command* command);
 };
 #endif

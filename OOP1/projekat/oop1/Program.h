@@ -11,6 +11,9 @@ class Program {
 public:
 	Program(istream& input);
 	~Program();
+	ifstream openInputFile(Command* command);
+	ofstream openOutputFile(Command* command);
+	stringstream consoleInput(Command* command);
 	virtual void run();
 	
 
