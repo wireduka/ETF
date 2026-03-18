@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Command::Command(): hasOption(false), append(false){}
+Command::Command(): append(false){}
 // Checks if command has both an argument and input redirection
 void Command::validate(const vector<Token>& tokens)
 {
@@ -18,7 +18,7 @@ void Command::setInputFile(const string& filename){
 	if (!inputFile.empty()) {
 		throw SemanticException("Error - multiple input directions");
 	}
-	checkInputFile(filename);
+	checkFile(filename);
 	inputFile = filename;
 }
 void Command::setOutputFile(const string& filename, bool isAppend){
@@ -34,14 +34,14 @@ void Command::setOutputFile(const string& filename, bool isAppend){
 
 void Command::setOption(const string& optionName)
 {
-	if (hasOption) {
+	if (hasOption()) {
 		option = optionName;
 	}
 	else
 		throw SemanticException("Error - command does not support options");
 }
 
-void Command::checkInputFile(const string& filename)
+void Command::checkFile(const string& filename)
 {
 	bool valid = false;
 	const int numOfExtensions = 3;
@@ -53,6 +53,15 @@ void Command::checkInputFile(const string& filename)
 	if (!valid)
 		throw FileFormatException("Error - invalid file format");
 	
+}
+
+void Command::checkOption()
+{
+	bool optFound = false;
+	for (string opt : options)
+		if (option == opt) optFound = true;
+	if (optFound == false)
+		throw SemanticException("Error - command does not support such option");
 }
 
 

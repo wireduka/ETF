@@ -1,11 +1,13 @@
-#ifndef ECHOCOMMAND_H
-#define ECHOCOMMAND_H
+#ifndef WCCOMMAND_H
+#define WCCOMMAND_H
 #include "ICommand.h"
-class EchoCommand : public Command {
+class WcCommand : public Command {
 public:
 
 	void validate(const vector<Token>& tokens) override;
 	void execute(istream& in, ostream& out) override;
-	
+
+	virtual bool hasOption() const { return true; }
+
 };
 #endif

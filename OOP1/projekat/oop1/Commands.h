@@ -1,0 +1,8 @@
+#include "EchoCommand.h"
+#include "PromptCommand.h"
+#include "TimeCommand.h"
+#include "DateCommand.h"
+#include "TouchCommand.h"
+#include "TruncateCommand.h"
+#include "RmCommand.h"
+#include "WcCommand.h"

@@ -95,7 +95,8 @@ bool Lexer::isValidCharacter(char character)
 		|| character == '|'
 		|| character == '<'
 		|| character == '>'
-		|| character == '.';
+		|| character == '.'
+		|| character == '/';
 }
 bool Lexer::isQuotationMark(char character)
 {

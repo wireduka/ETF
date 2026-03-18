@@ -13,7 +13,7 @@ Program::Program(istream& input) : input(input), prompt("$")
 {
 	reader = new Reader(input);
 	lexer = new Lexer();
-	parser = new Parser();
+	parser = new Parser(*this);
 	
 }
 
@@ -47,7 +47,7 @@ ofstream Program::openOutputFile(Command* command){
 stringstream Program::consoleInput(Command* command)
 {
 	stringstream console;
-	if (command->getArgument().empty() && command->getInputFile().empty()) {
+	if (command->hasInput() && command->getArgument().empty() && command->getInputFile().empty()) {
 		string line;
 		while (getline(cin, line))
 			console << line << "\n";
@@ -64,27 +64,51 @@ void Program::run()
 {
 
 	while (true) {
-		cout << prompt;
+		cout << prompt << " ";
 		try {
 			string line = reader->getLine();
 			reader->isEof();
 
 			vector<Token> tokens = lexer->tokenize(line);
 			vector<Command*> commands = parser->parse(tokens);
-			if(commands.empty()) throw SyntaxException("");
 			
-			Command* cmd = commands[0]; //TEMP
-			ifstream fin = openInputFile(cmd);
-			ofstream fout = openOutputFile(cmd);
-			stringstream stream(cmd->getArgument());
-			stringstream console = consoleInput(cmd);
+			Command* cmd;
+			if (parser->getPipe())
+				cmd = commands.back();
+			else
+				cmd = commands.front(); 
+			ifstream fin = openInputFile(commands.front());
+			ofstream fout;
+
+			fout = openOutputFile(cmd); 
+
+			stringstream stream(commands.front()->getArgument());
+			stringstream console = consoleInput(commands.front());
 			cin.clear();
-			
-			istream& in = (!cmd->getArgument().empty() ? (istream&)stream : !cmd->getInputFile().empty() ? (istream&)fin : console);
+
+			istream& in = (!commands.front()->getArgument().empty() ? (istream&)stream
+				: !commands.front()->getInputFile().empty() ? (istream&)fin
+				: (istream&)console);
+
 			ostream& out = (!cmd->getOutputFile().empty() ? (ostream&)fout : cout);
 
-			cmd->execute(in, out);
-			if (cmd->getOutputFile().empty())
+
+			if (parser->getPipe()) {
+				stringstream pipeStream;
+				commands.front()->execute(in, pipeStream);
+				for (int i = 1; i < commands.size() - 1; i++) {
+
+					stringstream nextStream;
+					commands[i]->execute(pipeStream, nextStream);
+					pipeStream.str(nextStream.str());
+					pipeStream.clear();
+				}
+				commands.back()->execute(pipeStream, out);
+			}
+			else {
+				cmd->execute(in, out);
+			}
+			if (cmd->getOutputFile().empty() && cmd->hasOutput())
 				cout << "\n";
 		}
 		catch (const LexicalException& e) {

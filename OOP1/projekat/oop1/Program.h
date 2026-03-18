@@ -14,19 +14,15 @@ public:
 	ifstream openInputFile(Command* command);
 	ofstream openOutputFile(Command* command);
 	stringstream consoleInput(Command* command);
+	string setPrompt(const string& newPrompt) { return prompt = newPrompt; }
 	virtual void run();
 	
 
 private:
 	istream& input;
-
 	Reader* reader;
 	Lexer* lexer;
 	Parser* parser;
-
 	string prompt;
-
 };
-
-
 #endif

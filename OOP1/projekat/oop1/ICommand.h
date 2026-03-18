@@ -17,6 +17,7 @@ public:
 
 	virtual bool hasInput() const { return true; }
 	virtual bool hasOutput() const { return true; }
+	virtual bool hasOption() const { return false; }
 	
 
 
@@ -26,7 +27,8 @@ public:
 	
 
 	virtual bool isAppend() const { return append; }
-	virtual void checkInputFile(const string& filename);
+	virtual void checkFile(const string& filename);
+	virtual void checkOption();
 
 	virtual string getInputFile() const { return inputFile; }
 	virtual string getOutputFile() const { return outputFile; }
@@ -38,9 +40,9 @@ protected:
 
 	string argument;
 	string option;
+	vector <string> options;
 	string inputFile;
 	string outputFile;
-	bool hasOption;
 	bool append;
 };
 #endif

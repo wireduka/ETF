@@ -1,11 +1,16 @@
 #include "Parser.h"
 #include "SyntaxException.h"
 #include "SemanticException.h"
-#include "EchoCommand.h"
+#include "Commands.h"
 
+
+Parser::Parser(Program& program) : isPipe(false), program(program){}
 
 vector<Command*> Parser::parse(const vector<Token>& tokens)
 {
+	Parser parser = *this;
+
+	isPipe = false;
 	if (tokens.empty()) throw SyntaxException("Error - empty command line");
     vector<vector<Token>> groups = splitByPipe(tokens);
 	vector<Command*> commands;
@@ -23,8 +28,8 @@ vector<Command*> Parser::parse(const vector<Token>& tokens)
 		cmd->validate(group);
 		commands.push_back(cmd);
 	}
-
-	
+	if(isPipe)
+		isValidPipe(commands);
     return commands;
 }
 
@@ -44,6 +49,7 @@ vector<vector<Token>> Parser::splitByPipe(const vector<Token>& tokens)
 				throw SyntaxException("Error - unexpected pipe");
 			}
 			groups.push_back(currentGroup);
+			isPipe = true;
 			currentGroup.clear();
 		}
 		else {
@@ -60,6 +66,13 @@ vector<vector<Token>> Parser::splitByPipe(const vector<Token>& tokens)
 Command* Parser::createCommand(const string& name)
 {
 	if (name == "echo") return new EchoCommand();
+	if (name == "prompt") return new PromptCommand(program);
+	if (name == "time") return new TimeCommand();
+	if (name == "date") return new DateCommand();
+	if (name == "touch") return new TouchCommand();
+	if (name == "truncate") return new TruncateCommand();
+	if (name == "rm") return new RmCommand();
+	if (name == "wc") return new WcCommand();
 	else throw SyntaxException("Error - unknown command");
 	
 }
@@ -104,6 +117,29 @@ vector <Token> Parser::setRedirections(vector<Token> group, Command* command)
 
 
 	return group;
+}
+
+void Parser::isValidPipe(vector<Command*> commands)
+{
+	for (int i = 1; i < commands.size(); i++)
+		if (!commands[i]->getArgument().empty())
+			throw SemanticException("Error - piped command cannot have an argument");
+	if (!commands[0]->getOutputFile().empty())
+		throw SyntaxException("Error - pipe entry point cannot have an output stream");
+	else if (!commands.back()->getInputFile().empty())
+		throw SyntaxException("Error - pipe exit point cannot have an input stream");
+	else{
+		for (int i = 1; i < commands.size() - 1; i++)
+			if (!commands[i]->getInputFile().empty() || !commands[i]->getOutputFile().empty())
+				throw SyntaxException("Error - commands connected in pipe cannot have an input or output stream");
+	}
+	if (!commands.front()->hasOutput())
+		throw SemanticException("Error - command cannot be pipe input");
+	if (!commands.back()->hasInput())
+		throw SemanticException("Error - command cannot be pipe output");
+	for (int i = 1; i < commands.size() - 1; i++)
+		if (!commands[i]->hasInput() || !commands[i]->hasInput())
+			throw SemanticException("Error - command cannot be in pipe");
 }
 
 

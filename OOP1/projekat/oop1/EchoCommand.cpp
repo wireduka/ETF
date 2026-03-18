@@ -13,7 +13,7 @@ void EchoCommand::validate(const vector<Token>& tokens){
 			argument = tokens[0].value;
 		}
 		else if (tokens[0].type == WORD) {
-			checkInputFile(tokens[0].value);
+			checkFile(tokens[0].value);
 			inputFile = tokens[0].value;
 		}
 	}
