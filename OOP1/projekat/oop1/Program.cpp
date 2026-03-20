@@ -53,10 +53,13 @@ stringstream Program::consoleInput(Command* command)
 			console << line << "\n";
 	}
 	string content = console.str();
-	if (!content.empty() && content.back() == '\n')
-		content.pop_back();
-	console.str(content);
-	console.clear();
+	if (command->trailingNewLine()) {
+		if (!content.empty() && content.back() == '\n')
+			content.pop_back();
+		console.str(content);
+		console.clear();
+	}
+
 	return console;
 }
 
@@ -84,14 +87,14 @@ void Program::run()
 
 			stringstream stream(commands.front()->getArgument());
 			stringstream console = consoleInput(commands.front());
-			cin.clear();
 
+			cin.clear();
+			
 			istream& in = (!commands.front()->getArgument().empty() ? (istream&)stream
 				: !commands.front()->getInputFile().empty() ? (istream&)fin
 				: (istream&)console);
 
 			ostream& out = (!cmd->getOutputFile().empty() ? (ostream&)fout : cout);
-
 
 			if (parser->getPipe()) {
 				stringstream pipeStream;
@@ -106,7 +109,9 @@ void Program::run()
 				commands.back()->execute(pipeStream, out);
 			}
 			else {
+
 				cmd->execute(in, out);
+
 			}
 			if (cmd->getOutputFile().empty() && cmd->hasOutput())
 				cout << "\n";

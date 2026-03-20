@@ -2,7 +2,7 @@
 #include "SemanticException.h"
 #include "FileFormatException.h"
 #include <array>
-
+#include <stdexcept>
 using namespace std;
 
 Command::Command(): append(false){}
@@ -12,6 +12,11 @@ void Command::validate(const vector<Token>& tokens)
 	if (hasInput() && !tokens.empty() && !inputFile.empty()) {
 		throw SemanticException("Error - cannot use both argument and input redirection");
 	}
+	if (!tokens.empty() && tokens[0].type == DASH_QUOTED_STRING)
+		throw SemanticException("Error - command does not support this argument type");
+
+	if (this->hasOption())
+		checkOption();
 }
 
 void Command::setInputFile(const string& filename){
@@ -57,11 +62,39 @@ void Command::checkFile(const string& filename)
 
 void Command::checkOption()
 {
+	if (mustHaveOption() && option.empty())
+		throw SemanticException("Error - command must have an option");
 	bool optFound = false;
-	for (string opt : options)
-		if (option == opt) optFound = true;
+	for (string opt : options) {
+		if (isOptionNum() && option.substr(0, opt.size()) == opt) {
+			try {
+				optionNumber = stoi(option.substr(opt.size()));
+				optFound = true;
+			}
+			catch (const std::invalid_argument&){
+				throw SemanticException("Error - option must be a number");
+			}
+		}
+		else if (option == opt) optFound = true;
+	}
 	if (optFound == false)
 		throw SemanticException("Error - command does not support such option");
+}
+
+void Command::standardInput(const vector<Token>& tokens, bool ifConsole)
+{
+	if (inputFile.empty()) {
+		if (ifConsole && tokens.empty()) {
+			return;
+		}
+		else if (tokens[0].type == QUOTED_STRING) {
+			argument = tokens[0].value;
+		}
+		else if (tokens[0].type == WORD) {
+			checkFile(tokens[0].value);
+			inputFile = tokens[0].value;
+		}
+	}
 }
 
 

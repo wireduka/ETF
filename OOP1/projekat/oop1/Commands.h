@@ -6,3 +6,5 @@
 #include "TruncateCommand.h"
 #include "RmCommand.h"
 #include "WcCommand.h"
+#include "TrCommand.h"
+#include "HeadCommand.h"

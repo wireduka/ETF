@@ -3,6 +3,7 @@
 #include "ICommand.h"
 class WcCommand : public Command {
 public:
+	WcCommand();
 
 	void validate(const vector<Token>& tokens) override;
 	void execute(istream& in, ostream& out) override;

@@ -14,7 +14,11 @@ vector<Token> Lexer::tokenize(const string& line){
 		char c = nline[i];
 		// quotation subprogram
 		if (isQuotationMark(c)) {
+			bool hasDash = (current == "-");
+			if (!current.empty() && !hasDash)
+				errorMarkers.push_back(i);
 			i++; // skip opening " sign
+			current.clear();
 			while ( i < nline.size() && nline[i] != '"') {
 				current.push_back(nline[i]);
 				i++;
@@ -23,7 +27,12 @@ vector<Token> Lexer::tokenize(const string& line){
 				throw LexicalException("Error - unenclosed quotation mark");
 			}
 			i++; // skip closing " sign
-			tokens.push_back(setToken(current, true));
+			if (current.empty())
+				throw LexicalException("Error - quoted string cannot be empty");
+			if(hasDash)
+				tokens.push_back(setToken(current, true, true));
+			else
+				tokens.push_back(setToken(current, true, false));
 			current.clear();
 			continue;
 		}
@@ -33,23 +42,23 @@ vector<Token> Lexer::tokenize(const string& line){
 		// checking possible redirection situations: >, <, >>
 		if (nline[i] == '<') {
 			if (!current.empty()) {
-				tokens.push_back(setToken(current, false));
+				tokens.push_back(setToken(current, false, false));
 				current.clear();
 			}
 			current.push_back(nline[i]);
-			tokens.push_back(setToken(current, false));
+			tokens.push_back(setToken(current, false, false));
 			current.clear();
 			continue;
 		}
 
 		else if (i + 1 < nline.size() && nline[i] == '>' && nline[i + 1] == '>') {
 			if (!current.empty()) {
-				tokens.push_back(setToken(current, false));
+				tokens.push_back(setToken(current, false, false));
 				current.clear();
 			}
 			current.push_back(nline[i]);
 			current.push_back(nline[i + 1]);
-			tokens.push_back(setToken(current, false));
+			tokens.push_back(setToken(current, false, false));
 			current.clear();
 			i++;
 			continue;
@@ -57,11 +66,11 @@ vector<Token> Lexer::tokenize(const string& line){
 
 		else if (nline[i] == '>') {
 			if (!current.empty()) {
-				tokens.push_back(setToken(current, false));
+				tokens.push_back(setToken(current, false, false));
 				current.clear();
 			}
 			current.push_back(nline[i]);
-			tokens.push_back(setToken(current, false));
+			tokens.push_back(setToken(current, false, false));
 			current.clear();
 			continue;
 		}
@@ -69,7 +78,7 @@ vector<Token> Lexer::tokenize(const string& line){
 		
 		if (isspace(nline[i])) {
 			if (!current.empty()) {
-				tokens.push_back(setToken(current, false));
+				tokens.push_back(setToken(current, false, false));
 				current.clear();
 			}
 		}
@@ -78,7 +87,7 @@ vector<Token> Lexer::tokenize(const string& line){
 	}
 
 	if (!current.empty()) {
-		tokens.push_back(setToken(current, false));
+		tokens.push_back(setToken(current, false, false));
 	}
 	if (!errorMarkers.empty()) throw LexicalException(nline, errorMarkers);
 
@@ -103,29 +112,31 @@ bool Lexer::isQuotationMark(char character)
 	return character == '"';
 }
 
-Token Lexer::setToken(string& word, bool isQuoted)
+Token Lexer::setToken(string& word, bool isQuoted, bool hasDash)
 {
 	Token temp;
 	temp.value = word;
-	if (isQuoted == true) temp.type = QUOTED_STRING;
-	else if (word == "|") temp.type = PIPE;
-	else if (word == "<") temp.type = REDIRECTION_IN;
-	else if (word == ">") temp.type = REDIRECTION_OUT;
-	else if (word == ">>") temp.type = REDIRECTION_APPEND;
-	else temp.type = WORD;
+	if (hasDash == true)				temp.type = DASH_QUOTED_STRING;
+	else if (isQuoted == true)			temp.type = QUOTED_STRING;
+	else if (word == "|")				temp.type = PIPE;
+	else if (word == "<")				temp.type = REDIRECTION_IN;
+	else if (word == ">")				temp.type = REDIRECTION_OUT;
+	else if (word == ">>")				temp.type = REDIRECTION_APPEND;
+	else								temp.type = WORD;
 	return temp;
 }
 
 string Lexer::tokenTypeToString(TokenType type)
 {
 	switch (type) {
-	case TokenType::WORD: return "WORD"; break;
-	case TokenType::PIPE: return "PIPE"; break;
-	case TokenType::REDIRECTION_IN: return "REDIRECTION_IN"; break;
-	case TokenType::REDIRECTION_OUT: return "REDIRECTION_OUT"; break;
+	case TokenType::WORD:				return "WORD"; break;
+	case TokenType::PIPE:				return "PIPE"; break;
+	case TokenType::REDIRECTION_IN:		return "REDIRECTION_IN"; break;
+	case TokenType::REDIRECTION_OUT:	return "REDIRECTION_OUT"; break;
 	case TokenType::REDIRECTION_APPEND: return "REDIRECTION_APPEND"; break;
-	case TokenType::QUOTED_STRING: return "QUOTED_STRING"; break;
-	default: return "UNKNOWN"; break;
+	case TokenType::QUOTED_STRING:		return "QUOTED_STRING"; break;
+	case TokenType::DASH_QUOTED_STRING:	return "DASH_QUOTED_STRING"; break;
+	default:							return "UNKNOWN"; break;
 	}
 	
 }

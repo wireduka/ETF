@@ -5,18 +5,8 @@ void EchoCommand::validate(const vector<Token>& tokens){
 	Command::validate(tokens);
 	if (tokens.size() > 1)
 		throw SemanticException("Error - too many arguments for echo command");
-	if (inputFile.empty()) {
-		if (tokens.empty()) {
-			return;
-		}
-		else if (tokens[0].type == QUOTED_STRING) {
-			argument = tokens[0].value;
-		}
-		else if (tokens[0].type == WORD) {
-			checkFile(tokens[0].value);
-			inputFile = tokens[0].value;
-		}
-	}
+
+	standardInput(tokens,true);
 }
 
 void EchoCommand::execute(istream& in, ostream& out)

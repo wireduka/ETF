@@ -10,7 +10,8 @@ enum TokenType {
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
 	REDIRECTION_APPEND,
-	PIPE
+	PIPE,
+	DASH_QUOTED_STRING
 };
 
 struct Token {
@@ -27,7 +28,7 @@ public:
 	bool isValidCharacter(char character);
 	bool isQuotationMark(char character);
 	//	Maps the token into the adequate enum member
-	Token setToken(string& word,bool isQuoted);
+	Token setToken(string& word,bool isQuoted, bool hasDash);
 	string tokenTypeToString(TokenType type);
 
 

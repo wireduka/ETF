@@ -10,7 +10,8 @@ void TimeCommand::validate(const vector<Token>& tokens)
 
 void TimeCommand::execute(istream& in, ostream& out)
 {
-	time_t now = time(nullptr);
-	tm* localTime = localtime(&now);
-	out << localTime->tm_hour << ":" << localTime->tm_min << ":" << localTime->tm_sec;
+	struct tm timeStruct;
+	time_t currTime = time(0);
+	localtime_s(&timeStruct,&currTime);
+	out << timeStruct.tm_hour << ":" << timeStruct.tm_min << ":" << timeStruct.tm_sec;
 }

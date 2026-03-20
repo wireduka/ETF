@@ -9,7 +9,8 @@ void DateCommand::validate(const vector<Token>& tokens)
 
 void DateCommand::execute(istream& in, ostream& out)
 {
-	time_t now = time(nullptr);
-	tm* localTime = localtime(&now);
-	out << localTime->tm_mday << "." << localTime->tm_mon + 1 << "." << localTime->tm_year + 1900;
+	struct tm timeStruct;
+	time_t currTime = time(0);
+	localtime_s(&timeStruct, &currTime);
+	out << timeStruct.tm_mday << "." << timeStruct.tm_mon + 1 << "." << timeStruct.tm_year + 1900;
 }

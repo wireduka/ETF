@@ -8,8 +8,6 @@ Parser::Parser(Program& program) : isPipe(false), program(program){}
 
 vector<Command*> Parser::parse(const vector<Token>& tokens)
 {
-	Parser parser = *this;
-
 	isPipe = false;
 	if (tokens.empty()) throw SyntaxException("Error - empty command line");
     vector<vector<Token>> groups = splitByPipe(tokens);
@@ -73,6 +71,8 @@ Command* Parser::createCommand(const string& name)
 	if (name == "truncate") return new TruncateCommand();
 	if (name == "rm") return new RmCommand();
 	if (name == "wc") return new WcCommand();
+	if (name == "tr") return new TrCommand();
+	if (name == "head") return new HeadCommand();
 	else throw SyntaxException("Error - unknown command");
 	
 }
