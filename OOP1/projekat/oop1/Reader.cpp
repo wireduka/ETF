@@ -17,3 +17,6 @@ bool Reader::isEof()
 	}
 	return false;
 }
+bool Reader::hasLine() {
+	return input.peek() != EOF;
+}

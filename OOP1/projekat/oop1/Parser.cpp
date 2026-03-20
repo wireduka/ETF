@@ -73,6 +73,7 @@ Command* Parser::createCommand(const string& name)
 	if (name == "wc") return new WcCommand();
 	if (name == "tr") return new TrCommand();
 	if (name == "head") return new HeadCommand();
+	if (name == "batch") return new BatchCommand();
 	else throw SyntaxException("Error - unknown command");
 	
 }
@@ -138,7 +139,7 @@ void Parser::isValidPipe(vector<Command*> commands)
 	if (!commands.back()->hasInput())
 		throw SemanticException("Error - command cannot be pipe output");
 	for (int i = 1; i < commands.size() - 1; i++)
-		if (!commands[i]->hasInput() || !commands[i]->hasInput())
+		if (!commands[i]->hasInput() || !commands[i]->hasOutput())
 			throw SemanticException("Error - command cannot be in pipe");
 }
 

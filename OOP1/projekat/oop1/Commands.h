@@ -8,3 +8,4 @@
 #include "WcCommand.h"
 #include "TrCommand.h"
 #include "HeadCommand.h"
+#include "BatchCommand.h"

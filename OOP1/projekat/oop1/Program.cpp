@@ -6,15 +6,13 @@
 #include "SemanticException.h"
 #include "ICommand.h"
 #include "FileFormatException.h"
-#include <fstream>
-#include <sstream>
 
-Program::Program(istream& input) : input(input), prompt("$")
+Program::Program(istream& input, ostream& output) : input(input), output(output), prompt("$")
 {
 	reader = new Reader(input);
 	lexer = new Lexer();
 	parser = new Parser(*this);
-	
+
 }
 
 Program::~Program()
@@ -63,11 +61,53 @@ stringstream Program::consoleInput(Command* command)
 	return console;
 }
 
+Command* Program::setPipe(vector<Command*> commands)
+{
+	Command* cmd;
+	if (parser->getPipe())
+		cmd = commands.back();
+	else
+		cmd = commands.front();
+	return cmd;
+}
+
+istream& Program::setInput(vector<Command*> commands)
+{
+	fin = openInputFile(commands.front());
+	stream.str(commands.front()->getArgument());
+	console = consoleInput(commands.front());
+	cin.clear();
+	stream.clear();
+
+	istream& in = (!commands.front()->getArgument().empty() ? (istream&)stream
+		: !commands.front()->getInputFile().empty() ? (istream&)fin
+		: (istream&)console);
+	return in;
+}
+
+ostream& Program::setOutput(Command* command)
+{
+	fout = openOutputFile(command);
+	ostream& out = (!command->getOutputFile().empty() ? (ostream&)fout : output);
+	return out;
+}
+
+void Program::executePipe(vector<Command*> commands, istream& in, ostream& out)
+{
+	stringstream pipeStream;
+	commands.front()->execute(in, pipeStream);
+	for (int i = 1; i < commands.size() - 1; i++) {
+
+		stringstream nextStream;
+		commands[i]->execute(pipeStream, nextStream);
+		pipeStream.str(nextStream.str());
+		pipeStream.clear();
+	}
+	commands.back()->execute(pipeStream, out);
+}
+
 void Program::run()
 {
-
-	while (true) {
-		cout << prompt << " ";
 		try {
 			string line = reader->getLine();
 			reader->isEof();
@@ -75,46 +115,20 @@ void Program::run()
 			vector<Token> tokens = lexer->tokenize(line);
 			vector<Command*> commands = parser->parse(tokens);
 			
-			Command* cmd;
-			if (parser->getPipe())
-				cmd = commands.back();
-			else
-				cmd = commands.front(); 
-			ifstream fin = openInputFile(commands.front());
-			ofstream fout;
-
-			fout = openOutputFile(cmd); 
-
-			stringstream stream(commands.front()->getArgument());
-			stringstream console = consoleInput(commands.front());
-
-			cin.clear();
+			Command* cmd = setPipe(commands);
+			istream& in = setInput(commands);
+			ostream& out = setOutput(cmd);
 			
-			istream& in = (!commands.front()->getArgument().empty() ? (istream&)stream
-				: !commands.front()->getInputFile().empty() ? (istream&)fin
-				: (istream&)console);
-
-			ostream& out = (!cmd->getOutputFile().empty() ? (ostream&)fout : cout);
-
-			if (parser->getPipe()) {
-				stringstream pipeStream;
-				commands.front()->execute(in, pipeStream);
-				for (int i = 1; i < commands.size() - 1; i++) {
-
-					stringstream nextStream;
-					commands[i]->execute(pipeStream, nextStream);
-					pipeStream.str(nextStream.str());
-					pipeStream.clear();
-				}
-				commands.back()->execute(pipeStream, out);
-			}
-			else {
-
+			if (parser->getPipe()) 
+				executePipe(commands, in, out);
+			else 
 				cmd->execute(in, out);
-
-			}
+			
 			if (cmd->getOutputFile().empty() && cmd->hasOutput())
-				cout << "\n";
+				output << "\n";
+
+			fout.close();
+			fin.close();
 		}
 		catch (const LexicalException& e) {
 			e.print();
@@ -129,5 +143,11 @@ void Program::run()
 			e.print();
 		}
 
-	}
+	
+}
+
+void Program::runBatch()
+{
+	while (reader->hasLine())
+		run();
 }

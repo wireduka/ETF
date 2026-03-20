@@ -11,8 +11,8 @@ public:
 	~Reader() {}
 
 	string getLine();
-	bool isEof();
-
+	bool isEof(); 
+	bool hasLine();
 private:
 	istream& input;
 };

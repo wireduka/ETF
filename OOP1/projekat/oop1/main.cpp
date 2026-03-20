@@ -4,10 +4,13 @@
 
 int main()
 {
-    Program* program = new Program(cin);
-    program->run();
+    Program* program = new Program(cin,cout);
+    
+    while (true) {
+        cout << program->getPrompt() << " ";
+        program->run();
+    }
 }
-
 
 
 

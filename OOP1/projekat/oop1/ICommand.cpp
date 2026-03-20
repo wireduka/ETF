@@ -5,7 +5,7 @@
 #include <stdexcept>
 using namespace std;
 
-Command::Command(): append(false){}
+Command::Command(): append(false),optionNumber(-1){}
 // Checks if command has both an argument and input redirection
 void Command::validate(const vector<Token>& tokens)
 {
@@ -49,8 +49,8 @@ void Command::setOption(const string& optionName)
 void Command::checkFile(const string& filename)
 {
 	bool valid = false;
-	const int numOfExtensions = 3;
-	const array<string, numOfExtensions> allowedExtensions = { ".txt",".csv",".log" };
+	const int numOfExtensions = 4;
+	const array<string, numOfExtensions> allowedExtensions = { ".txt",".csv",".log",".out"};
 	for (const string& extension : allowedExtensions) {
 		if (filename.size() > extension.size() && filename.substr(filename.size() - extension.size()) == extension)
 			valid = true;

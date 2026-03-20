@@ -36,6 +36,7 @@ public:
 	virtual bool trailingNewLine() const { return false; }
 	virtual bool isOptionNum() const { return false; }
 
+
 	// Getters
 	virtual string getInputFile() const { return inputFile; }
 	virtual string getOutputFile() const { return outputFile; }
