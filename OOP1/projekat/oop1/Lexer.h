@@ -4,8 +4,8 @@
 #include <vector>
 using namespace std;
 
-enum TokenType {
-	WORD,
+enum TypeToken {
+	TOKEN_WORD,
 	QUOTED_STRING,
 	REDIRECTION_IN,
 	REDIRECTION_OUT,
@@ -15,24 +15,24 @@ enum TokenType {
 };
 
 struct Token {
-	TokenType type = WORD;
+	TypeToken type = TOKEN_WORD;
 	string value;
 };
 
 class Lexer {
 public:
 	Lexer();
+
 	//	Tokenizes reader output into seperate tokens
 	vector<Token> tokenize(const string& line);
 
+	//	Validation checks
 	bool isValidCharacter(char character);
 	bool isQuotationMark(char character);
+
 	//	Maps the token into the adequate enum member
 	Token setToken(string& word,bool isQuoted, bool hasDash);
-	string tokenTypeToString(TokenType type);
-
-
-private:
+	string tokenTypeToString(TypeToken type);
 
 };
 

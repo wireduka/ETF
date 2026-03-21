@@ -20,8 +20,8 @@ void TrCommand::validate(const vector<Token>& tokens){
 			if (tokens[0].type == QUOTED_STRING) {
 				argument = tokens[0].value;
 			}
-			else if (tokens[0].type == WORD) {
-				checkFile(tokens[0].value);
+			else if (tokens[0].type == TOKEN_WORD) {
+//				checkFile(tokens[0].value);
 				inputFile = tokens[0].value;
 			}
 		}

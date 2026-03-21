@@ -23,7 +23,7 @@ void Command::setInputFile(const string& filename){
 	if (!inputFile.empty()) {
 		throw SemanticException("Error - multiple input directions");
 	}
-	checkFile(filename);
+	// checkFile(filename);
 	inputFile = filename;
 }
 void Command::setOutputFile(const string& filename, bool isAppend){
@@ -46,19 +46,19 @@ void Command::setOption(const string& optionName)
 		throw SemanticException("Error - command does not support options");
 }
 
-void Command::checkFile(const string& filename)
-{
-	bool valid = false;
-	const int numOfExtensions = 4;
-	const array<string, numOfExtensions> allowedExtensions = { ".txt",".csv",".log",".out"};
-	for (const string& extension : allowedExtensions) {
-		if (filename.size() > extension.size() && filename.substr(filename.size() - extension.size()) == extension)
-			valid = true;
-	}
-	if (!valid)
-		throw FileFormatException("Error - invalid file format");
-	
-}
+//void Command::checkFile(const string& filename)
+//{
+//	bool valid = false;
+//	const int numOfExtensions = 4;
+//	const array<string, numOfExtensions> allowedExtensions = { ".txt",".csv",".log",".out"};
+//	for (const string& extension : allowedExtensions) {
+//		if (filename.size() > extension.size() && filename.substr(filename.size() - extension.size()) == extension)
+//			valid = true;
+//	}
+//	if (!valid)
+//		throw FileFormatException("Error - invalid file format");
+//	
+//}
 
 void Command::checkOption()
 {
@@ -77,7 +77,7 @@ void Command::checkOption()
 		}
 		else if (option == opt) optFound = true;
 	}
-	if (optFound == false)
+	if (optFound == false && !option.empty())
 		throw SemanticException("Error - command does not support such option");
 }
 
@@ -90,8 +90,8 @@ void Command::standardInput(const vector<Token>& tokens, bool ifConsole)
 		else if (tokens[0].type == QUOTED_STRING) {
 			argument = tokens[0].value;
 		}
-		else if (tokens[0].type == WORD) {
-			checkFile(tokens[0].value);
+		else if (tokens[0].type == TOKEN_WORD) {
+//			checkFile(tokens[0].value);
 			inputFile = tokens[0].value;
 		}
 	}

@@ -1,6 +1,7 @@
 #include "PromptCommand.h"
 #include "SemanticException.h"
 #include "Program.h"
+
 PromptCommand::PromptCommand(Program& program) : Command(), program(program)
 {
 }
@@ -19,5 +20,6 @@ void PromptCommand::validate(const vector<Token>& tokens) {
 
 void PromptCommand::execute(istream& in, ostream& out)
 { 
-	program.setPrompt(argument);
+	
+	program.getInstance()->setPrompt(argument);
 }

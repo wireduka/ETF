@@ -14,23 +14,41 @@ public:
 	Program(istream& input, ostream& output);
 	~Program();
 
-	virtual ifstream openInputFile(Command* command);
-	virtual ofstream openOutputFile(Command* command);
+	// Opens files
+	ifstream openInputFile(Command* command);
+	ofstream openOutputFile(Command* command);
 
-	virtual stringstream consoleInput(Command* command);
-	virtual Command* setPipe(vector<Command*> commands);
-	virtual istream& setInput(vector<Command*> commands);
-	virtual ostream& setOutput(Command* command);
-	virtual void executePipe(vector<Command*> commands,istream& in, ostream& out);
+	// Console input formatting
+	stringstream consoleInput(Command* command);
 
-	virtual void setPrompt(const string& newPrompt) { prompt = newPrompt; }
-	virtual string getPrompt() { return prompt; }
-	
+	// Sets command in the case of pipe existance
+	Command* setPipe(vector<Command*> commands);
+
+	// Sets input and output
+	istream& setInput(vector<Command*> commands);
+	ostream& setOutput(Command* command);
+
+	// Executes pipe
+	void executePipe(vector<Command*> commands,istream& in, ostream& out);
+
+	// Prompt getters and setters
+	void setPrompt(const string& newPrompt) { prompt = newPrompt; }
+	string getPrompt() { return prompt; }
+
+	// Instance getters and setters
+	Program* getInstance(){return instance;}
+	void setInstance(Program* p) { instance = p; }
+
+	// Run main program and run batch
 	virtual void run();
 	virtual void runBatch();
-	
 
-protected:
+	// Command deletion
+	void deleteCommands(vector <Command*> commands);
+
+
+private:
+	Program* instance;
 	istream& input;
 	ostream& output;
 	Reader* reader;

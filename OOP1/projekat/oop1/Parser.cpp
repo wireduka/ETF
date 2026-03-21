@@ -17,7 +17,7 @@ vector<Command*> Parser::parse(const vector<Token>& tokens)
 	for (vector<Token> group : groups) {
 		Command* cmd = createCommand(group[0].value);
 		group.erase(group.begin());
-		if (!group.empty() && group[0].value.front() == '-' && group[0].type == WORD) {
+		if (!group.empty() && group[0].value.front() == '-' && group[0].type == TOKEN_WORD) {
 			cmd->setOption(group[0].value);
 			group.erase(group.begin());
 		}
@@ -73,7 +73,7 @@ Command* Parser::createCommand(const string& name)
 	if (name == "wc") return new WcCommand();
 	if (name == "tr") return new TrCommand();
 	if (name == "head") return new HeadCommand();
-	if (name == "batch") return new BatchCommand();
+	if (name == "batch") return new BatchCommand(program);
 	else throw SyntaxException("Error - unknown command");
 	
 }
@@ -85,7 +85,7 @@ vector <Token> Parser::setRedirections(vector<Token> group, Command* command)
 		!group.empty() && group.back().type == REDIRECTION_APPEND)
 		throw SemanticException("Error - redirection must have a stream");
 	while (group.size() >= 2) {
-		TokenType type = group[group.size() - 2].type;
+		TypeToken type = group[group.size() - 2].type;
 		string filename = group.back().value;
 		if (type != REDIRECTION_IN && type != REDIRECTION_OUT && type != REDIRECTION_APPEND)
 			break;

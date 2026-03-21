@@ -123,20 +123,20 @@ Token Lexer::setToken(string& word, bool isQuoted, bool hasDash)
 	else if (word == "<")				temp.type = REDIRECTION_IN;
 	else if (word == ">")				temp.type = REDIRECTION_OUT;
 	else if (word == ">>")				temp.type = REDIRECTION_APPEND;
-	else								temp.type = WORD;
+	else								temp.type = TOKEN_WORD;
 	return temp;
 }
 
-string Lexer::tokenTypeToString(TokenType type)
+string Lexer::tokenTypeToString(TypeToken type)
 {
 	switch (type) {
-	case TokenType::WORD:				return "WORD"; break;
-	case TokenType::PIPE:				return "PIPE"; break;
-	case TokenType::REDIRECTION_IN:		return "REDIRECTION_IN"; break;
-	case TokenType::REDIRECTION_OUT:	return "REDIRECTION_OUT"; break;
-	case TokenType::REDIRECTION_APPEND: return "REDIRECTION_APPEND"; break;
-	case TokenType::QUOTED_STRING:		return "QUOTED_STRING"; break;
-	case TokenType::DASH_QUOTED_STRING:	return "DASH_QUOTED_STRING"; break;
+	case TypeToken::TOKEN_WORD:			return "WORD"; break;
+	case TypeToken::PIPE:				return "PIPE"; break;
+	case TypeToken::REDIRECTION_IN:		return "REDIRECTION_IN"; break;
+	case TypeToken::REDIRECTION_OUT:	return "REDIRECTION_OUT"; break;
+	case TypeToken::REDIRECTION_APPEND: return "REDIRECTION_APPEND"; break;
+	case TypeToken::QUOTED_STRING:		return "QUOTED_STRING"; break;
+	case TypeToken::DASH_QUOTED_STRING:	return "DASH_QUOTED_STRING"; break;
 	default:							return "UNKNOWN"; break;
 	}
 	

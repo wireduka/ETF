@@ -29,19 +29,20 @@ public:
 
 	// Standard checks used for adequate parsing
 	virtual bool isAppend() const { return append; }
-	virtual void checkFile(const string& filename);
+
+	// virtual void checkFile(const string& filename);
 	virtual void checkOption();
 	virtual void standardInput(const vector<Token>& tokens, bool ifConsole);
 	virtual bool mustHaveOption() const { return true; }
 	virtual bool trailingNewLine() const { return false; }
 	virtual bool isOptionNum() const { return false; }
-
+	virtual bool printsNewline() const { return true; }
 
 	// Getters
 	virtual string getInputFile() const { return inputFile; }
 	virtual string getOutputFile() const { return outputFile; }
 	virtual string getArgument() const { return argument; }
-
+	
 
 
 protected:

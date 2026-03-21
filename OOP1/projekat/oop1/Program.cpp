@@ -1,18 +1,16 @@
+#include "ConsoleUtils.h"
 #include "Program.h"
-#include "Reader.h"
-#include "Lexer.h"
 #include "LexicalException.h"
 #include "SyntaxException.h"
 #include "SemanticException.h"
 #include "ICommand.h"
 #include "FileFormatException.h"
 
-Program::Program(istream& input, ostream& output) : input(input), output(output), prompt("$")
+Program::Program(istream& input, ostream& output) : input(input), output(output), prompt("$"), instance(nullptr)
 {
 	reader = new Reader(input);
 	lexer = new Lexer();
 	parser = new Parser(*this);
-
 }
 
 Program::~Program()
@@ -46,9 +44,11 @@ stringstream Program::consoleInput(Command* command)
 {
 	stringstream console;
 	if (command->hasInput() && command->getArgument().empty() && command->getInputFile().empty()) {
+		hideInput();
 		string line;
 		while (getline(cin, line))
 			console << line << "\n";
+		showInput();
 	}
 	string content = console.str();
 	if (command->trailingNewLine()) {
@@ -82,6 +82,7 @@ istream& Program::setInput(vector<Command*> commands)
 	istream& in = (!commands.front()->getArgument().empty() ? (istream&)stream
 		: !commands.front()->getInputFile().empty() ? (istream&)fin
 		: (istream&)console);
+
 	return in;
 }
 
@@ -89,6 +90,7 @@ ostream& Program::setOutput(Command* command)
 {
 	fout = openOutputFile(command);
 	ostream& out = (!command->getOutputFile().empty() ? (ostream&)fout : output);
+
 	return out;
 }
 
@@ -124,11 +126,14 @@ void Program::run()
 			else 
 				cmd->execute(in, out);
 			
-			if (cmd->getOutputFile().empty() && cmd->hasOutput())
+			if (cmd->getOutputFile().empty() && cmd->hasOutput() && cmd->printsNewline())
 				output << "\n";
 
 			fout.close();
 			fin.close();
+
+			deleteCommands(commands);
+			
 		}
 		catch (const LexicalException& e) {
 			e.print();
@@ -139,15 +144,19 @@ void Program::run()
 		catch (const SemanticException& e) {
 			e.print();
 		}
-		catch (const FileFormatException& e) {
-			e.print();
-		}
-
-	
+//		catch (const FileFormatException& e) {
+//			e.print();
+//		}
 }
 
 void Program::runBatch()
 {
 	while (reader->hasLine())
 		run();
+}
+
+void Program::deleteCommands(vector<Command*> commands)
+{
+	for (Command* c : commands)
+		delete c;
 }
