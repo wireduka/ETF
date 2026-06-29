@@ -8,21 +8,20 @@ import java.awt.Frame;
 import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
-import java.awt.event.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MainFrame extends Frame{
+public class MainFrame extends Frame implements WindowClosing{
 	
 	// File managing
-	private FileManager fileManager = new FileManager();
+	private FileManager fileManager = new FileManager(this);
 	// Frame constructor
 	public MainFrame() {
 		
 		super("ATS");
 		this.setSize(1600,800);
-		setupWindowClosing();
+		setupWindowClosing(this);
 		setupMenu();
 		this.setVisible(true);
 		
@@ -31,7 +30,7 @@ public class MainFrame extends Frame{
 	private void setupMenu() {
 		MenuBar menuBar = new MenuBar();
 		Menu fileMenu = new Menu("File");
-		
+
 		// File menu sub-menus
 		Menu importMenu = new Menu("Import as");
 		Menu exportMenu = new Menu("Export as");
@@ -55,7 +54,9 @@ public class MainFrame extends Frame{
 		exportMenu.add(csvExport);
 		
 		// Entry import action listener
-		entry.addActionListener(null); // TODO
+		entry.addActionListener(e->{
+			openTextDialog();
+		}); 
 		
 		// JSON import action listener
 		jsonImport.addActionListener(e->{
@@ -85,15 +86,6 @@ public class MainFrame extends Frame{
 		this.setMenuBar(menuBar);
 	}
 	
-	// Method for window closing
-	private void setupWindowClosing() {
-		this.addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent e) {
-				dispose();
-			}
-		});
-	}
 	
 	// Helper method for file importing/exporting
 	private void openFileDialog(FileManager.Mode mode, FileManager.FileType type ) {
@@ -107,21 +99,26 @@ public class MainFrame extends Frame{
 		// Helper variables
 		String fileName = fd.getFile();
 		String fileDirectory = fd.getDirectory();
+		String expectedExtension;
+		
 		// If user clicks Cancel
 		if(fileName == null) return;
 		
 		// Adding extension cases
-		String expectedExtension = type == FileType.JSON ? ".json" : ".csv";
+		switch(type) {
+		case JSON: expectedExtension = ".json"; 	break;
+		case CSV: expectedExtension = ".csv"; 		break;
+		default: expectedExtension = "";			break;
+		}
 		
-		// Import extension case
-		if(mode == Mode.IMPORT && !fileName.endsWith(expectedExtension)) {
-			// TODO ErrorDialog box
+		// Checking for extension
+		if(!fileName.endsWith(expectedExtension)) {
+			new ErrorDialog(this,"Invalid file format. Expected a " + 
+							expectedExtension + " file.", "Please select a valid " + 
+							expectedExtension + " file.");
 			return;
 		}
-		// Export extension case
-		if(mode == Mode.EXPORT && !fileName.endsWith(expectedExtension)) {
-			fileName += expectedExtension;
-		}
+
 		// Paths.get returns String as return value
 		Path path = Paths.get(fileDirectory,fileName);
 		File file = path.toFile();
@@ -129,9 +126,12 @@ public class MainFrame extends Frame{
 		// Delegate to FileManager for further processing
 		fileManager.handle(file, type, mode);
 		
-		
 	}
 	
-	
-
+	// Helper method for text importing
+	private void openTextDialog() {
+		TextAreaDialog txtDialog = new TextAreaDialog(this, "AIRPORT format: CODE, NAME, X, Y"," FLIGHT format: FROM, TO, DEPARTURE, DURATION");
+		String text = txtDialog.getInput();
+		// TODO parsing
+	}
 }
