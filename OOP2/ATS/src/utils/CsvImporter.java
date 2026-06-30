@@ -7,19 +7,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class CsvImporter implements Importable{
 
 	@Override
-	public void fileImport(File file) throws FileNotFoundException, IOException {
+	public TokenizedData readFile(File file) throws FileNotFoundException, IOException {
 		
 		try(BufferedReader reader = new BufferedReader(new FileReader(file))){
 			
 			String line;
 			String section = null;
-			ArrayList<ArrayList<String>> airports = new ArrayList<>();
-			ArrayList<ArrayList<String>> flights = new ArrayList<>();
+			List<List<String>> airports = new ArrayList<>();
+			List<List<String>> flights = new ArrayList<>();
 			
 			while((line = reader.readLine()) != null) {
 				
@@ -37,18 +38,22 @@ public class CsvImporter implements Importable{
 				
 				// Add airport to ArrayList
 				if(section.contains("AIRPORTS") && !line.isEmpty()) {
-					ArrayList<String> airport = new ArrayList<>(Arrays.asList(line.split(",")));
+					ArrayList<String> airport = new ArrayList<>();
+					for(String token : line.split(","))
+						airport.add(token.trim());
 					airports.add(airport);
 				}
 				// Add flight to ArrayList
 				if(section.contains("FLIGHTS") && !line.isEmpty()) {
-					ArrayList<String> flight = new ArrayList<>(Arrays.asList(line.split(",")));
+					ArrayList<String> flight = new ArrayList<>();
+					for(String token : line.split(","))
+						flight.add(token.trim());
 					flights.add(flight);
 				}
 			};
+			
+			return new TokenizedData(airports,flights);
 		
 		}
-		
 	}
-
 }

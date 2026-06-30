@@ -8,10 +8,10 @@ public class TextAreaDialog extends DefaultDialog{
 	
 	private TextArea input = new TextArea();
 
-	public TextAreaDialog(Frame owner, String msg0, String msg1) {
+	public TextAreaDialog(Frame owner, String ...messages) {
 		
 		// Third parameter defines if dialog is modal
-		super(owner,"Enter values",msg0,msg1);
+		super(owner,"Enter values",messages);
 		setSize(1000,400);
 		setLocationRelativeTo(owner);
 		add(input,BorderLayout.CENTER);

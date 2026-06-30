@@ -6,6 +6,6 @@ import java.io.IOException;
 
 public interface Importable {
 	
-	void fileImport(File file) throws FileNotFoundException, IOException;
+	TokenizedData readFile(File file) throws FileNotFoundException, IOException;
 
 }

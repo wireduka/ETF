@@ -12,10 +12,17 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import model.AirportTable;
+import model.DataType;
+import model.FlightTable;
+
 public class MainFrame extends Frame implements WindowClosing{
 	
 	// File managing
-	private FileManager fileManager = new FileManager(this);
+	private AirportTable airportTable = new AirportTable();
+	private FlightTable flightTable = new FlightTable();
+	private FileManager fileManager = new FileManager(this, airportTable, flightTable);
+	
 	// Frame constructor
 	public MainFrame() {
 		
@@ -36,7 +43,7 @@ public class MainFrame extends Frame implements WindowClosing{
 		Menu exportMenu = new Menu("Export as");
 		
 		// Import sub-menu items
-		MenuItem entry = new MenuItem("Entry");
+		Menu entryMenu = new Menu("Entry");
 		MenuItem jsonImport = new MenuItem("JSON");
 		MenuItem csvImport = new MenuItem("CSV");
 		
@@ -44,8 +51,16 @@ public class MainFrame extends Frame implements WindowClosing{
 		MenuItem jsonExport = new MenuItem("JSON");
 		MenuItem csvExport = new MenuItem("CSV");
 		
+		// Entry sub-menu items
+		MenuItem flightEntry = new MenuItem("Flights");
+		MenuItem airportEntry = new MenuItem("Airports");
+		
+		// Entry sub-menu adding
+		entryMenu.add(airportEntry);
+		entryMenu.add(flightEntry);
+		
 		// Import sub-menu adding
-		importMenu.add(entry);
+		importMenu.add(entryMenu);
 		importMenu.add(jsonImport);
 		importMenu.add(csvImport);
 		
@@ -53,9 +68,14 @@ public class MainFrame extends Frame implements WindowClosing{
 		exportMenu.add(jsonExport);
 		exportMenu.add(csvExport);
 		
-		// Entry import action listener
-		entry.addActionListener(e->{
-			openTextDialog();
+		// Flight entry import action listener
+		flightEntry.addActionListener(e->{
+			openTextDialog(DataType.FLIGHT);
+		}); 
+		
+		// Airport entry import action listener
+		airportEntry.addActionListener(e->{
+			openTextDialog(DataType.AIRPORT);
 		}); 
 		
 		// JSON import action listener
@@ -113,7 +133,7 @@ public class MainFrame extends Frame implements WindowClosing{
 		
 		// Checking for extension
 		if(!fileName.endsWith(expectedExtension)) {
-			new ErrorDialog(this,"Invalid file format. Expected a " + 
+			new TextDialog(this,"Error","Invalid file format. Expected a " + 
 							expectedExtension + " file.", "Please select a valid " + 
 							expectedExtension + " file.");
 			return;
@@ -129,8 +149,9 @@ public class MainFrame extends Frame implements WindowClosing{
 	}
 	
 	// Helper method for text importing
-	private void openTextDialog() {
-		TextAreaDialog txtDialog = new TextAreaDialog(this, "AIRPORT format: CODE, NAME, X, Y"," FLIGHT format: FROM, TO, DEPARTURE, DURATION");
+	private void openTextDialog(DataType type) {
+		String dialogText = (type == DataType.AIRPORT) ? "AIRPORT format: CODE, NAME, X, Y" : "FLIGHT format: FROM, TO, DEPARTURE, DURATION";
+		TextAreaDialog txtDialog = new TextAreaDialog(this, dialogText);
 		String text = txtDialog.getInput();
 		// TODO parsing
 	}

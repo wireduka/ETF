@@ -2,12 +2,12 @@ package gui;
 
 import java.awt.Frame;
 
-public class ErrorDialog extends DefaultDialog{
+public class TextDialog extends DefaultDialog{
 
-	public ErrorDialog(Frame owner, String msg0, String msg1) {
+	public TextDialog(Frame owner, String title, String... messages) {
 		
 		// Third parameter defines if dialog is modal
-		super(owner,"Error",msg0,msg1);
+		super(owner,title,messages);
 		setSize(500,150);
 		setLocationRelativeTo(owner);
 

@@ -13,8 +13,8 @@ import java.awt.event.KeyEvent;
 
 public abstract class DefaultDialog extends Dialog implements WindowClosing {
 
-	// Always accepts two messages
-	public DefaultDialog(Frame owner, String dialogName, String msg0, String msg1) {
+	// Main constructor
+	public DefaultDialog(Frame owner, String dialogName, String ...messages) {
 		
 		// Third parameter defines if dialog is modal
 		super(owner,dialogName,true);
@@ -26,9 +26,10 @@ public abstract class DefaultDialog extends Dialog implements WindowClosing {
 		Panel buttonPanel = createButtonPanel();
 		Panel labelPanel = new Panel(new GridLayout(0,1));
 		
+		for(String msg : messages) {
+			labelPanel.add(new Label(msg,Label.CENTER));
+		}
 		// Add takes Component as parameter
-		labelPanel.add(new Label(msg0,Label.CENTER));
-		labelPanel.add(new Label(msg1,Label.CENTER));
 		add(labelPanel,BorderLayout.NORTH);
 		add(buttonPanel,BorderLayout.SOUTH);
 
@@ -39,7 +40,7 @@ public abstract class DefaultDialog extends Dialog implements WindowClosing {
 		Button button = new Button();
 		button.setLabel("        OK        ");							// Extra spaces as a half measure for button widening
 		button.addActionListener(e->{ dispose(); });					// Closes dialog if X is pressed
-		button.addKeyListener(new KeyAdapter() {
+		button.addKeyListener(new KeyAdapter() {						// Enter key mapped to dialog closing
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if(e.getKeyCode() == KeyEvent.VK_ENTER) {

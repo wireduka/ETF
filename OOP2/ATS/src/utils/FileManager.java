@@ -4,15 +4,26 @@ import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import gui.ErrorDialog;
+import exception.InvalidDataException;
+import exception.InvalidFileFormatException;
+import gui.TextDialog;
+import model.AirportTable;
+import model.FlightTable;
 
 public class FileManager {
 	
-	private CsvImporter csvimp = new CsvImporter();
+	// For further processing
+	private AirportTable airportTable;
+	private FlightTable flightTable;
 	
 	// Used for Error dialog ownership 
 	private Frame owner;
+	
+	// Importers/exporters, parser
+	private CsvImporter csvImporter;
+	private Parser parser;
+	
+	
 	
 	// Used for separating file types
 	public enum FileType{
@@ -24,23 +35,42 @@ public class FileManager {
 		IMPORT,EXPORT
 	}
 	
-	public FileManager(Frame owner) {
+	public FileManager(Frame owner, AirportTable at, FlightTable ft) {
 		this.owner = owner;
+		this.airportTable = at;
+		this.flightTable = ft;
+		this.csvImporter = new CsvImporter();
+		this.parser = new Parser(airportTable, flightTable, owner);
 	}
 	
 	// Method for file and exception handling
 	public void handle(File file, FileType type, Mode mode) {
 		
-		try {
-			if(type == FileType.CSV && mode == Mode.IMPORT) {csvimp.fileImport(file);}
+			if(type == FileType.CSV && mode == Mode.IMPORT) {importFile(csvImporter,file);}
 			// TODO csvExporter, jsonExporter,jsonImporter
+			
+	}
+	
+	// Method for tokenization, parsing and table updating
+	public void importFile(Importable importer, File file) {
+		try {
+			TokenizedData tokens = importer.readFile(file);
+			parser.parse(tokens);
 			}
-		
 		catch(FileNotFoundException e) {
-			new ErrorDialog(owner,"File not found"," The file may have been moved or deleted");
-		}
+			new TextDialog(owner,"Error","File not found"," The file may have been moved or deleted");
+			}
 		catch(IOException e) {
-			new ErrorDialog(owner,"Unable to read file","The file might be open in another program or the program does not have privileges to read the file");
+			new TextDialog(owner,"Error","Unable to read file","The file might be open in another program or the program does not have privileges to read the file");
+		} 
+		catch (InvalidFileFormatException e) {
+			new TextDialog(owner,"Error",e.getMessage());
+		}
+		catch (NumberFormatException e) {
+			new TextDialog(owner,"Error","Invalid x/y coordinate, check if coordinates represent numbers");
+		}
+		catch (InvalidDataException e) {
+			new TextDialog(owner,"Error",e.getMessage());
 		}
 	}
 }
