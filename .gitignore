@@ -1,0 +1,49 @@
+# Kompajlirani fajlovi
+*.o
+*.obj
+*.exe
+*.out
+*.app
+*.dll
+*.so
+*.a
+
+# Build folderi
+build/
+bin/
+out/
+
+# IDE fajlovi
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln.docstates
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+
+# Debug
+*.dSYM/
+*.pdb
+
+Debug/
+Release/
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.sln
+*.ilk
+.vs/
+*.db
+*.vsidx
+*.ipch
+*.backup.json
+
+# Eclipse
+.classpath
+.project
+.settings/
